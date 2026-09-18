@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Unit 3 - Kuis Interaktif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+        }
+
+        body {
+            font-family: 'SimSun', '宋体', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(145deg, #0b1a2e, #1a2f3f);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: 30px 25px 20px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copyright {
+            font-family: 'SimSun', '宋体', serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.35);
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            letter-spacing: 1px;
+        }
+
+        /* Login */
+        #loginPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+        }
+
+        #loginPage h1 {
+            font-size: 42px;
+            color: #ffd54f;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #4a2c00;
+        }
+
+        #loginPage p {
+            font-size: 20px;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-form label {
+            font-size: 22px;
+            color: #e0e0e0;
+            text-align: left;
+        }
+
+        .login-form input {
+            font-family: 'SimSun', '宋体', sans-serif;
+            font-size: 24px;
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: none;
+            background: #fff;
+            color: #1a1a2e;
+            outline: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .login-form input:focus {
+            outline: 2px solid #ffb300;
+        }
+
+        .btn-start {
+            font-family: 'SimSun', '宋体', serif;
+            font-size: 32px;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 60px;
+            background: #ffb300;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #e6a200;
+            transition: 0.1s linear;
+            margin-top: 20px;
+        }
+
+        .btn-start:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #e6a200;
+        }
+
+        /* Quiz */
+        #quizPage {
+            display: none;
+            flex-direction: column;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-info .identity {
+            font-size: 20px;
+            color: #b0b0b0;
+        }
+
+        .header-info .identity strong {
+            color: #ffd54f;
+        }
+
+        .header-info .progress-text {
+            font-size: 20px;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        .timer-area {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            display: inline-block;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffd54f;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 20px;
+            border-radius: 40px;
+            border: 2px solid #ffb300;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .timer.warning {
+            color: #ff5252;
+            border-color: #ff5252;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffb300, #ff6f00);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .question-area {
+            background: rgba(255,255,255,0.06);
+            border-radius: 30px;
+            padding: 30px 25px;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        .question-text {
+            font-size: 34px;
+            color: #fff;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .question-text .blank {
+            display: inline-block;
+            min-width: 100px;
+            border-bottom: 4px solid #ffb300;
+            margin: 0 5px;
+            color: #ffb300;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 60px;
+            padding: 12px 25px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+            font-size: 26px;
+            color: #eee;
+        }
+
+        .option-item:hover {
+            background: rgba(255,215,0,0.08);
+            border-color: rgba(255,215,0,0.3);
+        }
+
+        .option-item.selected {
+            border-color: #ffb300;
+            background: rgba(255,215,0,0.15);
+            color: #fff;
+        }
+
+        .option-item .radio {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #888;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+
+        .option-item.selected .radio {
+            border-color: #ffb300;
+            background: #ffb300;
+        }
+
+        .option-item.selected .radio::after {
+            content: "✓";
+            color: #1a1a2e;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Navigasi - hanya tombol NEXT dan FINISH */
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .nav-buttons button {
+            font-family: 'SimSun', '宋体', serif;
+            font-size: 26px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-buttons button:active {
+            transform: translateY(6px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+        }
+
+        .nav-buttons button:disabled {
+            opacity: 0.3;
+            transform: none;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        /* Tombol PREV dihilangkan */
+        .btn-prev {
+            display: none !important;
+        }
+
+        .btn-next {
+            background: #ff8a65;
+            color: #3e1f0d;
+        }
+
+        .btn-finish {
+            background: #ffd54f;
+            color: #1a1a2e;
+            box-shadow: 0 6px 0 #c9a800;
+        }
+
+        .btn-finish:active {
+            box-shadow: 0 1px 0 #c9a800;
+        }
+
+        /* Hasil */
+        #resultPage {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+        }
+
+        #resultPage h2 {
+            font-size: 44px;
+            color: #ffd54f;
+            margin-bottom: 10px;
+        }
+
+        .identitas-hasil {
+            font-size: 26px;
+            color: #ddd;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 30px;
+            border-radius: 40px;
+        }
+
+        #resultPage .nilai {
+            font-size: 80px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(255,215,0,0.15);
+            padding: 20px 50px;
+            border-radius: 60px;
+            border: 2px solid #ffb300;
+            margin: 15px 0;
+        }
+
+        #resultPage .detail {
+            font-size: 24px;
+            color: #ccc;
+            text-align: center;
+            line-height: 1.8;
+            margin-top: 10px;
+        }
+
+        #resultPage .detail span.benar { color: #76ff03; }
+        #resultPage .detail span.salah { color: #ff5252; }
+
+        .btn-ulang {
+            font-family: 'SimSun', '宋体', serif;
+            font-size: 28px;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 60px;
+            background: #ffb300;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #e6a200;
+            transition: 0.1s linear;
+            margin-top: 25px;
+        }
+
+        .btn-ulang:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #e6a200;
+        }
+
+        .timeout-notice {
+            color: #ff5252;
+            font-size: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 15px; }
+            #loginPage h1 { font-size: 30px; }
+            .login-form input { font-size: 20px; }
+            .btn-start { font-size: 26px; padding: 14px 30px; }
+            .question-text { font-size: 26px; }
+            .option-item { font-size: 20px; padding: 10px 18px; }
+            .nav-buttons button { font-size: 20px; padding: 10px 20px; }
+            .header-info .progress-text { font-size: 16px; }
+            #resultPage .nilai { font-size: 50px; padding: 15px 30px; }
+            .timer { font-size: 22px; padding: 2px 12px; }
+            .identitas-hasil { font-size: 20px; padding: 6px 20px; }
+        }
+
+        .screen-protect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: transparent;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-protect" id="screenProtect"></div>
+
+    <div class="container" id="mainContainer">
+        <!-- Login -->
+        <div id="loginPage">
+            <h1>📘 LATIHAN UNIT 3</h1>
+            <p>Kuis Interaktif • 40 Soal • 4 Bagian • ⏱ 20 detik/soal</p>
+            <div class="login-form">
+                <label for="namaInput">Nama Lengkap</label>
+                <input type="text" id="namaInput" placeholder="Masukkan nama..." required>
+                <label for="kelasInput">Kelas</label>
+                <input type="text" id="kelasInput" placeholder="Contoh: 4A">
+            </div>
+            <button class="btn-start" id="btnMulai">🚀 Mulai Kuis</button>
+            <div style="margin-top: 25px; font-size: 16px; color: rgba(255,255,255,0.3);">
+                Copyright(C) by lcnpalembang-08994477998
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div id="quizPage">
+            <div class="header-info">
+                <div class="identity"><strong>Nama:</strong> <span id="namaDisplay">-</span> &nbsp;|&nbsp; <strong>Kelas:</strong> <span id="kelasDisplay">-</span></div>
+                <div class="progress-text" id="progressText">Bagian 1/4 • Soal 1/10</div>
+            </div>
+            <div class="timer-area">
+                <span class="timer" id="timerDisplay">20</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+
+            <div class="question-area" id="questionArea">
+                <div class="question-text" id="questionText">Loading soal...</div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="timeout-notice" id="timeoutNotice">⏰ Waktu habis! Lanjut ke soal berikutnya.</div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-next" id="btnNext">Selanjutnya ▶</button>
+                <button class="btn-finish" id="btnFinish" style="display:none;">✅ Selesai</button>
+            </div>
+
+            <div class="copyright" style="margin-top:15px;">
+                Copyright(C) by lcnpalembang-08994477998
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div id="resultPage">
+            <h2>🏆 Hasil Kuis</h2>
+            <div class="identitas-hasil" id="identitasHasil">Nama: - | Kelas: -</div>
+            <div class="nilai" id="nilaiAkhir">0%</div>
+            <div class="detail" id="detailHasil">
+                <span class="benar">Benar: 0</span> &nbsp;|&nbsp; <span class="salah">Salah: 0</span>
+                <br><br>
+                <span id="rincianBagian"></span>
+            </div>
+            <button class="btn-ulang" id="btnUlang">🔄 Kerjakan Ulang</button>
+            <div style="margin-top: 25px; font-size: 16px; color: rgba(255,255,255,0.3);">
+                Copyright(C) by lcnpalembang-08994477998
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================== DATA SOAL ========================
+        const soalA = [
+            { q: "被子", options: ["selimut", "gelas", "punggung"], correct: 0 },
+            { q: "波浪", options: ["ombak", "bola lampu", "lereng gunung"], correct: 0 },
+            { q: "幸福", options: ["bahagia", "merawat", "bintang"], correct: 0 },
+            { q: "礼仪", options: ["upacara", "nomor satu", "menggoreng"], correct: 0 },
+            { q: "包扎", options: ["membebat / membungkus", "rotim", "bantal"], correct: 0 },
+            { q: "袜子", options: ["kaos kaki", "adik perempuan", "menghapus"], correct: 0 },
+            { q: "祈祷", options: ["berdoa", "jubah", "sabun"], correct: 0 },
+            { q: "铅笔", options: ["pensil", "buku", "pulpen"], correct: 0 },
+            { q: "抽屉", options: ["laci", "meja", "kursi"], correct: 0 },
+            { q: "房间", options: ["kamar", "sekolah", "toko"], correct: 0 }
+        ];
+
+        const soalB = [
+            { q: "我不想洗澡, ____ 天气太冷了。", options: ["因为", "但是"], correct: 0 },
+            { q: "妹妹不会游泳, ____ 她喜欢去游泳池。", options: ["因为", "但是"], correct: 1 },
+            { q: "妈妈很会做菜, ____ 今天她没有做菜。", options: ["因为", "但是"], correct: 1 },
+            { q: "我喜欢去图书馆看书, ____ 图书馆里有很多好看的书。", options: ["因为", "但是"], correct: 0 },
+            { q: "我今天不能去学校, ____ 我病了。", options: ["因为", "但是"], correct: 0 },
+            { q: "他不想吃面条, ____ 他不饿。", options: ["因为", "但是"], correct: 0 },
+            { q: "姐姐很漂亮, ____ 她不高兴。", options: ["因为", "但是"], correct: 1 },
+            { q: "我会游泳, ____ 我不会潜水。", options: ["因为", "但是"], correct: 1 },
+            { q: "他每天做作业, ____ 他学习很认真。", options: ["因为", "但是"], correct: 0 },
+            { q: "我想买新衣服, ____ 我没有钱。", options: ["因为", "但是"], correct: 1 }
+        ];
+
+        const soalC = [
+            { q: "爸爸喝了桌子上的咖啡。", options: [
+                    "爸爸把桌子上的咖啡喝了。",
+                    "爸爸喝了把桌子上的咖啡。",
+                    "把爸爸桌子上的咖啡喝了。",
+                    "爸爸桌子上的咖啡喝了把。"
+                ], correct: 0 },
+            { q: "我吃了妈妈做的面条。", options: [
+                    "我把妈妈做的面条吃了。",
+                    "我吃了把妈妈做的面条。",
+                    "把妈妈做的面条我吃了。",
+                    "妈妈做的面条我把吃了。"
+                ], correct: 0 },
+            { q: "妹妹做了作业。", options: [
+                    "妹妹把作业做了。",
+                    "把妹妹做了作业。",
+                    "妹妹作业做了把。",
+                    "作业把妹妹做了。"
+                ], correct: 0 },
+            { q: "姐姐喝了冰箱里的果汁。", options: [
+                    "姐姐把冰箱里的果汁喝了。",
+                    "把姐姐冰箱里的果汁喝了。",
+                    "姐姐喝了把冰箱里的果汁。",
+                    "冰箱里的果汁姐姐喝了把。"
+                ], correct: 0 },
+            { q: "哥哥看了那本书。", options: [
+                    "哥哥把那本书看了。",
+                    "把哥哥那本书看了。",
+                    "哥哥看了把那本书。",
+                    "那本书哥哥看了把。"
+                ], correct: 0 },
+            { q: "我写了作业。", options: [
+                    "我把作业写了。",
+                    "把写了我作业。",
+                    "作业我写了把。",
+                    "我写了把作业。"
+                ], correct: 0 },
+            { q: "他买了新书包。", options: [
+                    "他把新书包买了。",
+                    "把新书包他买了。",
+                    "他买了把新书包。",
+                    "新书包他把买了。"
+                ], correct: 0 },
+            { q: "她洗了衣服。", options: [
+                    "她把衣服洗了。",
+                    "把衣服她洗了。",
+                    "她洗了把衣服。",
+                    "衣服她把洗了。"
+                ], correct: 0 },
+            { q: "我们吃了米饭。", options: [
+                    "我们把米饭吃了。",
+                    "把米饭我们吃了。",
+                    "我们吃了把米饭。",
+                    "米饭我们吃了把。"
+                ], correct: 0 },
+            { q: "妈妈放了铅笔在抽屉里。", options: [
+                    "妈妈把铅笔放在抽屉里。",
+                    "把妈妈铅笔放在抽屉里。",
+                    "妈妈放了把铅笔在抽屉里。",
+                    "铅笔把妈妈放在抽屉里。"
+                ], correct: 0 }
+        ];
+
+        const soalD = [
+            { q: "我有一支很漂亮的 ______。", options: ["铅笔", "书本", "桌子", "椅子"], correct: 0 },
+            { q: "昨天回家，我还用我的 ______ 写字呢。", options: ["铅笔", "钢笔", "橡皮", "尺子"], correct: 0 },
+            { q: "我想，昨天写了作业，我把铅笔放在 ______ 里。", options: ["铅笔盒", "书包", "抽屉", "桌子"], correct: 0 },
+            { q: "妹妹想用铅笔 ______。", options: ["画画儿", "唱歌", "跳舞", "看书"], correct: 0 },
+            { q: "我去妹妹的 ______ 里找她。", options: ["房间", "学校", "商店", "图书馆"], correct: 0 },
+            { q: "妹妹在床上 ______书呢。", options: ["看", "睡觉", "吃饭", "写字"], correct: 0 },
+            { q: "妈妈把铅笔放在桌子的 ______ 里。", options: ["抽屉", "书包", "盒子", "口袋"], correct: 0 },
+            { q: "我喜欢去 ______ 看书，因为那里有很多好看的书。", options: ["图书馆", "学校", "商店", "公园"], correct: 0 },
+            { q: "今天天气很 ______,要多穿衣服。", options: ["冷", "热", "好", "大"], correct: 0 },
+            { q: "我想去游泳池 ______。", options: ["游泳", "跑步", "跳高", "画画"], correct: 0 }
+        ];
+
+        // ======================== FUNGSI ========================
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function shuffleOptions(soal) {
+            const opts = soal.options;
+            const correctAns = opts[soal.correct];
+            const shuffled = shuffleArray([...opts]);
+            const newCorrect = shuffled.indexOf(correctAns);
+            soal.options = shuffled;
+            soal.correct = newCorrect;
+            return soal;
+        }
+
+        function shuffleAllQuestions() {
+            shuffleArray(soalA);
+            shuffleArray(soalB);
+            shuffleArray(soalC);
+            shuffleArray(soalD);
+            soalA.forEach(s => shuffleOptions(s));
+            soalB.forEach(s => shuffleOptions(s));
+            soalC.forEach(s => shuffleOptions(s));
+            soalD.forEach(s => shuffleOptions(s));
+        }
+
+        // ======================== STATE ========================
+        const sections = [
+            { name: "Hanzi & Arti", data: soalA },
+            { name: "因为 atau 但是", data: soalB },
+            { name: "Kalimat 把", data: soalC },
+            { name: "Melengkapi Kalimat", data: soalD }
+        ];
+
+        let currentSection = 0;
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let isTimeout = [];
+        let timerInterval = null;
+        let timeLeft = 20;
+        const TIME_LIMIT = 20;
+        let nama = "", kelas = "";
+
+        // ======================== DOM ========================
+        const loginPage = document.getElementById('loginPage');
+        const quizPage = document.getElementById('quizPage');
+        const resultPage = document.getElementById('resultPage');
+        const btnMulai = document.getElementById('btnMulai');
+        const namaInput = document.getElementById('namaInput');
+        const kelasInput = document.getElementById('kelasInput');
+        const namaDisplay = document.getElementById('namaDisplay');
+        const kelasDisplay = document.getElementById('kelasDisplay');
+        const progressText = document.getElementById('progressText');
+        const progressFill = document.getElementById('progressFill');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const btnNext = document.getElementById('btnNext');
+        const btnFinish = document.getElementById('btnFinish');
+        const btnUlang = document.getElementById('btnUlang');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timeoutNotice = document.getElementById('timeoutNotice');
+        const nilaiAkhir = document.getElementById('nilaiAkhir');
+        const detailHasil = document.getElementById('detailHasil');
+        const rincianBagian = document.getElementById('rincianBagian');
+        const identitasHasil = document.getElementById('identitasHasil');
+
+        // ======================== FUNGSI UTAMA ========================
+        function getGlobalIndex() {
+            let idx = 0;
+            for (let i = 0; i < currentSection; i++) idx += sections[i].data.length;
+            idx += currentQuestion;
+            return idx;
+        }
+
+        function stopTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        }
+
+        function startTimer() {
+            stopTimer();
+            timeLeft = TIME_LIMIT;
+            updateTimerDisplay();
+            timerDisplay.classList.remove('warning');
+            timeoutNotice.style.display = 'none';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 5) timerDisplay.classList.add('warning');
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            timerDisplay.textContent = timeLeft;
+        }
+
+        function handleTimeout() {
+            const globalIdx = getGlobalIndex();
+            isTimeout[globalIdx] = true;
+            userAnswers[globalIdx] = -1;
+            timeoutNotice.style.display = 'block';
+            document.querySelectorAll('.option-item').forEach(el => el.classList.add('disabled'));
+
+            setTimeout(() => {
+                timeoutNotice.style.display = 'none';
+                const section = sections[currentSection];
+                if (currentQuestion < section.data.length - 1) {
+                    currentQuestion++;
+                    renderQuestion();
+                } else if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    currentQuestion = 0;
+                    renderQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 1200);
+        }
+
+        function renderQuestion() {
+            stopTimer();
+            const globalIdx = getGlobalIndex();
+            const section = sections[currentSection];
+            const soal = section.data[currentQuestion];
+            const total = section.data.length;
+
+            progressText.textContent = `Bagian ${currentSection+1}/4 • Soal ${currentQuestion+1}/${total}`;
+            const totalProgress = ((currentSection * 10) + currentQuestion) / (sections.length * 10) * 100;
+            progressFill.style.width = totalProgress + '%';
+
+            let qText = soal.q;
+            if (currentSection === 1 || currentSection === 3) {
+                qText = qText.replace(/____/g, '<span class="blank">____</span>');
+            }
+            questionText.innerHTML = qText;
+
+            optionsContainer.innerHTML = '';
+            const selected = (userAnswers[globalIdx] !== undefined && userAnswers[globalIdx] !== -1) ? userAnswers[globalIdx] : -1;
+            const isTimedOut = isTimeout[globalIdx] || false;
+
+            soal.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option-item';
+                if (selected === idx) div.classList.add('selected');
+                if (isTimedOut) div.classList.add('disabled');
+                div.setAttribute('data-index', idx);
+
+                const radio = document.createElement('span');
+                radio.className = 'radio';
+                div.appendChild(radio);
+                div.appendChild(document.createTextNode(' ' + opt));
+
+                if (!isTimedOut) {
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const idx = parseInt(this.getAttribute('data-index'));
+                        pilihJawaban(idx);
+                    });
+                }
+
+                optionsContainer.appendChild(div);
+            });
+
+            // Tombol NEXT / FINISH
+            btnNext.style.display = 'inline-block';
+            btnFinish.style.display = 'none';
+            if (currentSection === sections.length - 1 && currentQuestion === sections[currentSection].data.length - 1) {
+                btnNext.style.display = 'none';
+                btnFinish.style.display = 'inline-block';
+            }
+
+            namaDisplay.textContent = nama;
+            kelasDisplay.textContent = kelas;
+
+            if (!isTimeout[globalIdx] && userAnswers[globalIdx] === -1) {
+                startTimer();
+            } else {
+                timerDisplay.textContent = '--';
+                timerDisplay.classList.remove('warning');
+            }
+
+            document.getElementById('questionArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function pilihJawaban(index) {
+            const globalIdx = getGlobalIndex();
+            if (isTimeout[globalIdx]) return;
+
+            userAnswers[globalIdx] = index;
+            stopTimer();
+            timerDisplay.textContent = '✓';
+            timerDisplay.classList.remove('warning');
+
+            document.querySelectorAll('.option-item').forEach((item, i) => {
+                item.classList.toggle('selected', i === index);
+                item.classList.add('disabled');
+            });
+
+            setTimeout(() => {
+                const section = sections[currentSection];
+                if (currentQuestion < section.data.length - 1) {
+                    currentQuestion++;
+                    renderQuestion();
+                } else if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    currentQuestion = 0;
+                    renderQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 800);
+        }
+
+        function finishQuiz() {
+            stopTimer();
+            let totalBenar = 0, totalSalah = 0;
+            let rincian = '';
+            let globalIdx = 0;
+
+            sections.forEach((section, sIdx) => {
+                let benar = 0, salah = 0;
+                section.data.forEach((soal, qIdx) => {
+                    const jawaban = userAnswers[globalIdx];
+                    const timeout = isTimeout[globalIdx] || false;
+                    if (timeout || jawaban === -1) salah++;
+                    else if (jawaban === soal.correct) benar++;
+                    else salah++;
+                    globalIdx++;
+                });
+                totalBenar += benar;
+                totalSalah += salah;
+                rincian += `Bagian ${sIdx+1} (${section.name}): ${benar} benar, ${salah} salah\n`;
+            });
+
+            const totalSoal = totalBenar + totalSalah;
+            const persen = Math.round((totalBenar / totalSoal) * 100);
+
+            // Tampilkan identitas di hasil
+            identitasHasil.textContent = `Nama: ${nama}  |  Kelas: ${kelas}`;
+
+            quizPage.style.display = 'none';
+            resultPage.style.display = 'flex';
+            nilaiAkhir.textContent = persen + '%';
+            detailHasil.innerHTML = `
+                <span class="benar">Benar: ${totalBenar}</span> &nbsp;|&nbsp; <span class="salah">Salah: ${totalSalah}</span>
+                <br><br>
+                <span style="font-size:20px; color:#ccc;">${rincian.replace(/\n/g, '<br>')}</span>
+            `;
+        }
+
+        // ======================== MULAI & ULANG ========================
+        function startQuiz() {
+            const namaVal = namaInput.value.trim();
+            const kelasVal = kelasInput.value.trim();
+            if (!namaVal || !kelasVal) { alert('Harap isi Nama dan Kelas!'); return; }
+            nama = namaVal; kelas = kelasVal;
+
+            shuffleAllQuestions();
+
+            const total = sections.reduce((acc, s) => acc + s.data.length, 0);
+            userAnswers = new Array(total).fill(-1);
+            isTimeout = new Array(total).fill(false);
+
+            currentSection = 0;
+            currentQuestion = 0;
+
+            loginPage.style.display = 'none';
+            quizPage.style.display = 'flex';
+            resultPage.style.display = 'none';
+
+            renderQuestion();
+
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+        }
+
+        function beforeUnloadHandler(e) {
+            e.preventDefault();
+            e.returnValue = 'Kuis akan selesai dikerjakan dan akan mulai baru. Yakin ingin keluar?';
+            return e.returnValue;
+        }
+
+        // ======================== EVENT LISTENER ========================
+        btnMulai.addEventListener('click', startQuiz);
+
+        btnNext.addEventListener('click', () => {
+            const section = sections[currentSection];
+            if (currentQuestion < section.data.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else if (currentSection < sections.length - 1) {
+                currentSection++;
+                currentQuestion = 0;
+                renderQuestion();
+            }
+        });
+
+        btnFinish.addEventListener('click', finishQuiz);
+
+        btnUlang.addEventListener('click', () => {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            loginPage.style.display = 'flex';
+            quizPage.style.display = 'none';
+            resultPage.style.display = 'none';
+            namaInput.value = '';
+            kelasInput.value = '';
+            stopTimer();
+            userAnswers = [];
+            isTimeout = [];
+            currentSection = 0;
+            currentQuestion = 0;
+        });
+
+        // Keyboard: hanya panah kanan
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && quizPage.style.display !== 'none') {
+                if (btnFinish.style.display !== 'none') btnFinish.click();
+                else btnNext.click();
+            }
+        });
+
+        // ======================== PERLINDUNGAN ========================
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P')) {
+                e.preventDefault(); return false;
+            }
+            if (e.ctrlKey && e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.key === 'PrintScreen') {
+                alert('Fungsi screenshot dinonaktifkan.');
+                e.preventDefault(); return false;
+            }
+        });
+
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'PrintScreen') {
+                alert('Fungsi screenshot dinonaktifkan.');
+                e.preventDefault(); return false;
+            }
+        });
+
+        console.log('Kuis dilindungi.');
+
+        // ======================== INISIALISASI ========================
+        loginPage.style.display = 'flex';
+        quizPage.style.display = 'none';
+        resultPage.style.display = 'none';
+    </script>
+</body>
+</html>
